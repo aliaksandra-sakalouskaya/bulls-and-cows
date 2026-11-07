@@ -1,5 +1,10 @@
 import type { Base } from './types.js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export function createDigitValidator(base: Base): (char: string) => boolean {
-  return () => false;
+  const digits = '0123456789abcdef'.slice(0, base);
+
+  return (char) => {
+    if (char.length !== 1) return false;
+    return digits.includes(char.toLowerCase());
+  };
 }
