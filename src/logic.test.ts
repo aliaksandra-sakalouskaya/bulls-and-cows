@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createDigitValidator } from './logic.js';
+import { isValidGuess } from './logic.js';
 
 describe('createDigitValidator', () => {
   it('accepts 1 in binary', () => {
@@ -45,5 +46,43 @@ describe('createDigitValidator', () => {
   it('rejects empty string in hexadecimal system', () => {
     const isHexadecimalDigit = createDigitValidator(16);
     expect(isHexadecimalDigit('')).toBe(false);
+  });
+});
+
+describe('isValidGuess', () => {
+  it('rejects a guess shorter than the chosen length', () => {
+    expect(isValidGuess('1234', 6, 10)).toBe(false);
+  });
+
+  it('rejects a guess longer than the chosen length', () => {
+    expect(isValidGuess('1234', 2, 16)).toBe(false);
+  });
+
+  it('accepts a valid guess', () => {
+    expect(isValidGuess('01', 2, 2)).toBe(true);
+  });
+
+  it('rejects an empty guess', () => {
+    expect(isValidGuess('', 2, 16)).toBe(false);
+  });
+
+  it('rejects a guess with a digit outside the base', () => {
+    expect(isValidGuess('a678', 4, 10)).toBe(false);
+  });
+
+  it('accepts hex letters in hexadecimal', () => {
+    expect(isValidGuess('0f5a31', 6, 16)).toBe(true);
+  });
+
+  it('accepts uppercase hex letters', () => {
+    expect(isValidGuess('A5431', 5, 16)).toBe(true);
+  });
+
+  it('rejects a guess with repeated digits', () => {
+    expect(isValidGuess('ff4521', 6, 16)).toBe(false);
+  });
+
+  it('treats a and A as the same digit', () => {
+    expect(isValidGuess('aA4521', 6, 16)).toBe(false);
   });
 });

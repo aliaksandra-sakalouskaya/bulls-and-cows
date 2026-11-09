@@ -8,3 +8,13 @@ export function createDigitValidator(base: Base): (char: string) => boolean {
     return digits.includes(char.toLowerCase());
   };
 }
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export function isValidGuess(
+  guess: string,
+  length: number,
+  base: Base,
+): boolean {
+  return true;
+}
+/* eslint-disable @typescript-eslint/no-unused-vars */
