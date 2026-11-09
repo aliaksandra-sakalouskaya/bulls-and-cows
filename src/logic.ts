@@ -9,12 +9,19 @@ export function createDigitValidator(base: Base): (char: string) => boolean {
   };
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export function isValidGuess(
   guess: string,
   length: number,
   base: Base,
 ): boolean {
-  return true;
+  if (guess.length !== length) return false;
+
+  const digitValidator = createDigitValidator(base);
+  const isBasedDigits = guess.split('').every(digitValidator);
+
+  if (!isBasedDigits) return false;
+
+  const uniqueDigits = new Set(guess.toLowerCase());
+
+  return guess.length === uniqueDigits.size;
 }
-/* eslint-disable @typescript-eslint/no-unused-vars */
