@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createDigitValidator } from './logic.js';
-import { isValidGuess } from './logic.js';
+import { createDigitValidator, isValidGuess, evaluateGuess } from './logic.js';
 
 describe('createDigitValidator', () => {
   it('accepts 1 in binary', () => {
@@ -84,5 +83,35 @@ describe('isValidGuess', () => {
 
   it('treats a and A as the same digit', () => {
     expect(isValidGuess('aA4521', 6, 16)).toBe(false);
+  });
+});
+
+describe('evaluateGuess', () => {
+  it('returns zero bulls and cows when no digits match', () => {
+    expect(evaluateGuess('1234', '5678')).toEqual({ bulls: 0, cows: 0 });
+  });
+
+  it('finds two bulls and zero cows', () => {
+    expect(evaluateGuess('1234', '1256')).toEqual({ bulls: 2, cows: 0 });
+  });
+
+  it('finds only cows', () => {
+    expect(evaluateGuess('1234', '4321')).toEqual({ bulls: 0, cows: 4 });
+  });
+
+  it('finds one bull and two cows', () => {
+    expect(evaluateGuess('1234', '1325')).toEqual({ bulls: 1, cows: 2 });
+  });
+
+  it('returns exact match', () => {
+    expect(evaluateGuess('1234', '1234')).toEqual({ bulls: 4, cows: 0 });
+  });
+
+  it('returns a full match despite case differences in hex', () => {
+    expect(evaluateGuess('a1b2', 'A1B2')).toEqual({ bulls: 4, cows: 0 });
+  });
+
+  it('counts cows in a two-digit guess', () => {
+    expect(evaluateGuess('07', '70')).toEqual({ bulls: 0, cows: 2 });
   });
 });

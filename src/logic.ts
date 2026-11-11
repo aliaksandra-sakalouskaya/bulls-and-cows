@@ -1,4 +1,4 @@
-import type { Base } from './types.js';
+import type { Base, GuessResult } from './types.js';
 
 export function createDigitValidator(base: Base): (char: string) => boolean {
   const digits = '0123456789abcdef'.slice(0, base);
@@ -25,3 +25,9 @@ export function isValidGuess(
 
   return guess.length === uniqueDigits.size;
 }
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export function evaluateGuess(secret: string, guess: string): GuessResult {
+  return { bulls: 0, cows: 0 };
+}
+/* eslint-enable @typescript-eslint/no-unused-vars */
