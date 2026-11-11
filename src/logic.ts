@@ -26,8 +26,19 @@ export function isValidGuess(
   return guess.length === uniqueDigits.size;
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export function evaluateGuess(secret: string, guess: string): GuessResult {
-  return { bulls: 0, cows: 0 };
+  const secretDigits = secret.toLowerCase().split('');
+  const guessDigits = guess.toLowerCase().split('');
+
+  const bullDigits = secretDigits.filter(
+    (digit, index) => digit === guessDigits[index],
+  );
+  const commonDigits = secretDigits.filter((digit) =>
+    guessDigits.includes(digit),
+  );
+
+  return {
+    bulls: bullDigits.length,
+    cows: commonDigits.length - bullDigits.length,
+  };
 }
-/* eslint-enable @typescript-eslint/no-unused-vars */
