@@ -43,12 +43,27 @@ export function evaluateGuess(secret: string, guess: string): GuessResult {
   };
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
+function pickDigits(
+  available: readonly string[],
+  length: number,
+  random: RandomSource,
+): string {
+  if (length === 0) {
+    return '';
+  }
+
+  const randomIndex = Math.floor(random() * available.length);
+  const picked = available[randomIndex];
+  const rest = available.filter((item, index) => index !== randomIndex);
+
+  return picked + pickDigits(rest, length - 1, random);
+}
+
 export function generateSecret(
   length: number,
   base: Base,
   random: RandomSource = Math.random,
 ): string {
-  return '';
+  const digits = '0123456789abcdef'.slice(0, base).split('');
+  return pickDigits(digits, length, random);
 }
-/* eslint-enable @typescript-eslint/no-unused-vars */
