@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { createDigitValidator, isValidGuess, evaluateGuess } from './logic.js';
+import {
+  createDigitValidator,
+  isValidGuess,
+  evaluateGuess,
+  generateSecret,
+} from './logic.js';
 
 describe('createDigitValidator', () => {
   it('accepts 1 in binary', () => {
@@ -113,5 +118,25 @@ describe('evaluateGuess', () => {
 
   it('counts cows in a two-digit guess', () => {
     expect(evaluateGuess('07', '70')).toEqual({ bulls: 0, cows: 2 });
+  });
+});
+
+describe('generateSecret', () => {
+  it('generates a valid secret of the first digits', () => {
+    expect(generateSecret(4, 10, () => 0)).toBe('0123');
+  });
+
+  it('generates a valid secret of the last digits', () => {
+    expect(generateSecret(4, 10, () => 0.99)).toBe('9876');
+  });
+
+  it('generates a valid binary secret', () => {
+    const secret = generateSecret(2, 2);
+    expect(isValidGuess(secret, 2, 2)).toBe(true);
+  });
+
+  it('generates a valid hex secret', () => {
+    const secret = generateSecret(4, 16);
+    expect(isValidGuess(secret, 4, 16)).toBe(true);
   });
 });
