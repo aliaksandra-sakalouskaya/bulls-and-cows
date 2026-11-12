@@ -4,6 +4,7 @@ import {
   isValidGuess,
   evaluateGuess,
   generateSecret,
+  countPossibleSecrets,
 } from './logic.js';
 
 describe('createDigitValidator', () => {
@@ -138,5 +139,31 @@ describe('generateSecret', () => {
   it('generates a valid hex secret', () => {
     const secret = generateSecret(4, 16);
     expect(isValidGuess(secret, 4, 16)).toBe(true);
+  });
+});
+
+describe('countPossibleSecrets', () => {
+  it('counts 5040 secrets for 4 decimal digits', () => {
+    expect(countPossibleSecrets(4, 10)).toBe(5040);
+  });
+
+  it('counts 2 secrets for 2 binary digits', () => {
+    expect(countPossibleSecrets(2, 2)).toBe(2);
+  });
+
+  it('counts 336 secrets for 3 octal digits', () => {
+    expect(countPossibleSecrets(3, 8)).toBe(336);
+  });
+
+  it('counts 5765760 secrets for 6 hex digits', () => {
+    expect(countPossibleSecrets(6, 16)).toBe(5765760);
+  });
+
+  it('counts 10 secrets for 1 decimal digit', () => {
+    expect(countPossibleSecrets(1, 10)).toBe(10);
+  });
+
+  it('returns the same result on a repeated call', () => {
+    expect(countPossibleSecrets(4, 10)).toBe(countPossibleSecrets(4, 10));
   });
 });

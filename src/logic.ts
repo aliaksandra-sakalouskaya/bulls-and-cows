@@ -67,3 +67,9 @@ export function generateSecret(
   const digits = '0123456789abcdef'.slice(0, base).split('');
   return pickDigits(digits, length, random);
 }
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export function countPossibleSecrets(length: number, base: number): number {
+  return 0;
+}
+/* eslint-enable @typescript-eslint/no-unused-vars */
