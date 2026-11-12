@@ -1,4 +1,10 @@
-import type { Base, GuessResult, RandomSource } from './types.js';
+import type {
+  Base,
+  GuessResult,
+  RandomSource,
+  GameState,
+  HistoryEntry,
+} from './types.js';
 
 export function createDigitValidator(base: Base): (char: string) => boolean {
   const digits = '0123456789abcdef'.slice(0, base);
@@ -94,3 +100,16 @@ function createPossibleSecretsCounter(): (
 }
 
 export const countPossibleSecrets = createPossibleSecretsCounter();
+
+export function addGuess(state: GameState, guess: string): GameState {
+  const attempt: HistoryEntry = {
+    guess,
+    ...evaluateGuess(state.secret, guess),
+  };
+
+  return {
+    ...state,
+    status: attempt.bulls === state.settings.length ? 'win' : state.status,
+    history: [...state.history, attempt],
+  };
+}
