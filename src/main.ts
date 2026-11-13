@@ -1,5 +1,5 @@
 import type { GameState, Base } from './types.js';
-import { countPossibleSecrets } from './logic.js';
+import { countPossibleSecrets, generateSecret } from './logic.js';
 
 const initialState: GameState = {
   status: 'set up',
@@ -31,6 +31,7 @@ function createBaseSelect(): HTMLSelectElement {
 
   selectEl.append(...optionsEl);
   selectEl.value = String(state.settings.base);
+  selectEl.disabled = state.status !== 'set up';
 
   selectEl.addEventListener('change', () => {
     const selected = BASE_OPTIONS.find(
@@ -66,6 +67,7 @@ function createLengthSelect(): HTMLSelectElement {
 
   selectEl.append(...optionsEl);
   selectEl.value = String(state.settings.length);
+  selectEl.disabled = state.status !== 'set up';
 
   selectEl.addEventListener('change', () => {
     const selected = LENGTHS.find(
@@ -102,15 +104,46 @@ function createPossibleCount(): HTMLParagraphElement {
   return textEl;
 }
 
+function createStartButton(): HTMLButtonElement {
+  const buttonEl = document.createElement('button');
+  buttonEl.textContent = 'Start Game';
+
+  buttonEl.addEventListener('click', () => {
+    state = {
+      ...state,
+      status: 'play',
+      secret: generateSecret(state.settings.length, state.settings.base),
+      history: [],
+      startTime: Date.now(),
+    };
+
+    render();
+  });
+
+  return buttonEl;
+}
+
 function render(): void {
   const title = document.createElement('h1');
   title.textContent = 'Bulls and Cows';
-  document.body.replaceChildren(
+  const commonElements = [
     title,
     createBaseSelect(),
     createLengthSelect(),
     createPossibleCount(),
-  );
+  ];
+
+  switch (state.status) {
+    case 'set up':
+      document.body.replaceChildren(...commonElements, createStartButton());
+      break;
+    case 'play':
+      document.body.replaceChildren(...commonElements);
+      break;
+    case 'win':
+      document.body.replaceChildren(...commonElements);
+      break;
+  }
 }
 
 render();
