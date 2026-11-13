@@ -3,6 +3,8 @@ import {
   countPossibleSecrets,
   generateSecret,
   createDigitValidator,
+  isValidGuess,
+  addGuess,
 } from './logic.js';
 
 const initialState: GameState = {
@@ -147,6 +149,35 @@ function createStartButton(): HTMLButtonElement {
   return buttonEl;
 }
 
+function createErrorElement(): HTMLParagraphElement {
+  const textEl = document.createElement('p');
+  return textEl;
+}
+
+function createGuessButton(
+  guessInput: HTMLInputElement,
+  errorEl: HTMLParagraphElement,
+): HTMLButtonElement {
+  const buttonEl = document.createElement('button');
+  buttonEl.textContent = 'Send the Guess';
+
+  buttonEl.addEventListener('click', () => {
+    const isValid = isValidGuess(
+      guessInput.value,
+      state.settings.length,
+      state.settings.base,
+    );
+    if (isValid) {
+      state = addGuess(state, guessInput.value);
+      render();
+    } else {
+      errorEl.textContent = `Enter ${state.settings.length} different digits`;
+    }
+  });
+
+  return buttonEl;
+}
+
 function render(): void {
   const title = document.createElement('h1');
   title.textContent = 'Bulls and Cows';
@@ -161,9 +192,17 @@ function render(): void {
     case 'set up':
       document.body.replaceChildren(...commonElements, createStartButton());
       break;
-    case 'play':
-      document.body.replaceChildren(...commonElements, createGuessInput());
+    case 'play': {
+      const guessInput = createGuessInput();
+      const errorEl = createErrorElement();
+      document.body.replaceChildren(
+        ...commonElements,
+        guessInput,
+        errorEl,
+        createGuessButton(guessInput, errorEl),
+      );
       break;
+    }
     case 'win':
       document.body.replaceChildren(...commonElements);
       break;
