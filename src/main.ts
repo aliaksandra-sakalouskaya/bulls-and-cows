@@ -1,5 +1,9 @@
 import type { GameState, Base } from './types.js';
-import { countPossibleSecrets, generateSecret } from './logic.js';
+import {
+  countPossibleSecrets,
+  generateSecret,
+  createDigitValidator,
+} from './logic.js';
 
 const initialState: GameState = {
   status: 'set up',
@@ -29,6 +33,7 @@ function createBaseSelect(): HTMLSelectElement {
     return optionEl;
   });
 
+  selectEl.name = 'base';
   selectEl.append(...optionsEl);
   selectEl.value = String(state.settings.base);
   selectEl.disabled = state.status !== 'set up';
@@ -65,6 +70,7 @@ function createLengthSelect(): HTMLSelectElement {
     return optionEl;
   });
 
+  selectEl.name = 'length';
   selectEl.append(...optionsEl);
   selectEl.value = String(state.settings.length);
   selectEl.disabled = state.status !== 'set up';
@@ -104,6 +110,24 @@ function createPossibleCount(): HTMLParagraphElement {
   return textEl;
 }
 
+function createGuessInput(): HTMLInputElement {
+  const inputEl = document.createElement('input');
+  inputEl.type = 'text';
+  inputEl.name = 'guess';
+  inputEl.maxLength = state.settings.length;
+
+  const digitValidator = createDigitValidator(state.settings.base);
+
+  inputEl.addEventListener('input', () => {
+    const chars = inputEl.value.split('');
+
+    const suitableChars = chars.filter(digitValidator);
+    inputEl.value = suitableChars.join('');
+  });
+
+  return inputEl;
+}
+
 function createStartButton(): HTMLButtonElement {
   const buttonEl = document.createElement('button');
   buttonEl.textContent = 'Start Game';
@@ -138,7 +162,7 @@ function render(): void {
       document.body.replaceChildren(...commonElements, createStartButton());
       break;
     case 'play':
-      document.body.replaceChildren(...commonElements);
+      document.body.replaceChildren(...commonElements, createGuessInput());
       break;
     case 'win':
       document.body.replaceChildren(...commonElements);
