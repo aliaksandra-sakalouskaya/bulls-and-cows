@@ -1,4 +1,4 @@
-import type { GameState, Base } from './types.js';
+import type { GameState, Base, HistoryEntry } from './types.js';
 import {
   countPossibleSecrets,
   generateSecret,
@@ -154,6 +154,26 @@ function createErrorElement(): HTMLParagraphElement {
   return textEl;
 }
 
+function createHistoryList(): HTMLUListElement {
+  const ulEl = document.createElement('ul');
+
+  const items = state.history.map((item: HistoryEntry) => {
+    const liEl = document.createElement('li');
+    const guessEl = document.createElement('div');
+    const resultEl = document.createElement('div');
+
+    guessEl.textContent = `guess: ${item.guess}`;
+    resultEl.textContent = `result: ${item.bulls} bulls, ${item.cows} cows`;
+
+    liEl.append(guessEl, resultEl);
+    return liEl;
+  });
+
+  ulEl.append(...items);
+
+  return ulEl;
+}
+
 function createGuessButton(
   guessInput: HTMLInputElement,
   errorEl: HTMLParagraphElement,
@@ -167,12 +187,24 @@ function createGuessButton(
       state.settings.length,
       state.settings.base,
     );
-    if (isValid) {
-      state = addGuess(state, guessInput.value);
-      render();
-    } else {
+
+    if (!isValid) {
       errorEl.textContent = `Enter ${state.settings.length} different digits`;
+      return;
     }
+
+    const isSameValue = state.history.some(
+      (item: HistoryEntry) =>
+        item.guess.toLowerCase() === guessInput.value.toLowerCase(),
+    );
+
+    if (isSameValue) {
+      errorEl.textContent = `You have already tried ${guessInput.value}`;
+      return;
+    }
+
+    state = addGuess(state, guessInput.value);
+    render();
   });
 
   return buttonEl;
@@ -195,17 +227,21 @@ function render(): void {
     case 'play': {
       const guessInput = createGuessInput();
       const errorEl = createErrorElement();
+      const results = createHistoryList();
       document.body.replaceChildren(
         ...commonElements,
         guessInput,
         errorEl,
         createGuessButton(guessInput, errorEl),
+        results,
       );
       break;
     }
-    case 'win':
-      document.body.replaceChildren(...commonElements);
+    case 'win': {
+      const results = createHistoryList();
+      document.body.replaceChildren(...commonElements, results);
       break;
+    }
   }
 }
 
