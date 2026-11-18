@@ -116,6 +116,10 @@ export function addGuess(state: GameState, guess: string): GameState {
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export function formatTime(timeMs: number): string {
-  return '0:00';
+  const timeS = Math.floor(timeMs / 1000);
+  const minutes = Math.floor(timeS / 60).toString();
+  const seconds = (timeS % 60).toString().padStart(2, '0');
+
+  return `${minutes}:${seconds}`;
 }
 /* eslint-enable @typescript-eslint/no-unused-vars */
