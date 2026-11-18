@@ -5,6 +5,7 @@ import {
   evaluateGuess,
   generateSecret,
   countPossibleSecrets,
+  formatTime,
 } from './logic.js';
 
 describe('createDigitValidator', () => {
@@ -165,5 +166,23 @@ describe('countPossibleSecrets', () => {
 
   it('returns the same result on a repeated call', () => {
     expect(countPossibleSecrets(4, 10)).toBe(countPossibleSecrets(4, 10));
+  });
+});
+
+describe('formatTime', () => {
+  it('take 125000 milliseconds and return 2:05', () => {
+    expect(formatTime(125000)).toBe('2:05');
+  });
+
+  it('take 5000 milliseconds and return 0:05', () => {
+    expect(formatTime(5000)).toBe('0:05');
+  });
+
+  it('take 60000 milliseconds and return 1:00', () => {
+    expect(formatTime(60000)).toBe('1:00');
+  });
+
+  it('take 0 milliseconds and return 0:00', () => {
+    expect(formatTime(0)).toBe('0:00');
   });
 });

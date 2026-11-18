@@ -113,3 +113,9 @@ export function addGuess(state: GameState, guess: string): GameState {
     history: [...state.history, attempt],
   };
 }
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export function formatTime(timeMs: number): string {
+  return '0:00';
+}
+/* eslint-enable @typescript-eslint/no-unused-vars */
